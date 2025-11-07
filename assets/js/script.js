@@ -27,13 +27,28 @@ function customCursor() {
 }
 
 // Анимация галереи в баннере
-const gallery = document.querySelector('.scrolling-gallery');
-if (gallery) {
+function initBannerGallery() {
+    const galleryContainer = document.querySelector('.gallery-container');
+    const gallery = document.querySelector('.scrolling-gallery');
+
+    if (!gallery) return;
+
+    const artworks = gallery.querySelectorAll('.artwork');
+    const totalWidth = gallery.scrollWidth;
+
+    artworks.forEach(artwork => {
+        const clone = artwork.cloneNode(true);
+        gallery.appendChild(clone);
+    });
+
     gsap.to(gallery, {
-        x: '-50%',
-        duration: 40,
+        x: `-=${totalWidth}`,
+        duration: 80,
         ease: "none",
-        repeat: -1
+        repeat: -1,
+        modifiers: {
+            x: gsap.utils.unitize(x => parseFloat(x) % totalWidth)
+        }
     });
 
     gsap.to('.artwork', {
@@ -46,6 +61,11 @@ if (gallery) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    initBannerGallery();
+    customCursor();
+});
 
 // Анимация карточек галереи
 gsap.utils.toArray('.art-card').forEach((card, i) => {
@@ -194,10 +214,6 @@ gsap.from('.contact-image', {
         trigger: ".contacts-section",
         start: "top 70%"
     }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    customCursor();
 });
 
 // Анимация скролл-стрелки
